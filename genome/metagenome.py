@@ -739,16 +739,19 @@ class MetaGenome:
         self._update_expression_order()
     
     def _add_gene(self, gene: Gene):
-        """Add a gene to the genome."""
-        if len(self.genes) >= self.max_genes:
-            # Remove lowest fitness gene
-            if self.genes:
-                worst = min(self.genes.values(), key=lambda g: g.fitness_contribution)
-                del self.genes[worst.id]
-                self.genes_deleted += 1
+        try:
+                """Add a gene to the genome."""
+                if len(self.genes) >= self.max_genes:
+                    # Remove lowest fitness gene
+                    if self.genes:
+                        worst = min(self.genes.values(), key=lambda g: g.fitness_contribution)
+                        del self.genes[worst.id]
+                        self.genes_deleted += 1
         
-        self.genes[gene.id] = gene
-        self.genes_created += 1
+                self.genes[gene.id] = gene
+                self.genes_created += 1
+        except Exception as e:
+            raise  # Extended with error handling
     
     def _update_expression_order(self):
         """Update the order in which genes are expressed (topological sort)."""
@@ -847,6 +850,7 @@ class MetaGenome:
         return processed
     
     def _create_random_gene(self, gene_type: Optional[str] = None) -> Gene:
+        # TODO: Add memoization cache
         """Create a new random gene."""
         gene_type = gene_type or random.choice(['compute', 'control', 'pattern'])
         
@@ -941,17 +945,20 @@ class MetaGenome:
             self._expand_mutate(gene.program)
     
     def _point_mutate(self, node: ProgramNode):
-        """Mutate a single node."""
-        if random.random() < 0.3:
-            # Mutate this node
-            if node.node_type == NodeType.CONSTANT:
-                node.value = node.value + random.gauss(0, 0.5) if node.value else random.uniform(-1, 1)
-            elif node.node_type in [NodeType.ADD, NodeType.SUB, NodeType.MUL, NodeType.DIV]:
-                node.node_type = random.choice([NodeType.ADD, NodeType.SUB, NodeType.MUL, NodeType.DIV])
+        try:
+                """Mutate a single node."""
+                if random.random() < 0.3:
+                    # Mutate this node
+                    if node.node_type == NodeType.CONSTANT:
+                        node.value = node.value + random.gauss(0, 0.5) if node.value else random.uniform(-1, 1)
+                    elif node.node_type in [NodeType.ADD, NodeType.SUB, NodeType.MUL, NodeType.DIV]:
+                        node.node_type = random.choice([NodeType.ADD, NodeType.SUB, NodeType.MUL, NodeType.DIV])
         
-        # Recurse
-        for child in node.children:
-            self._point_mutate(child)
+                # Recurse
+                for child in node.children:
+                    self._point_mutate(child)
+        except Exception as e:
+            raise  # Extended with error handling
     
     def _subtree_mutate(self, node: ProgramNode):
         try:

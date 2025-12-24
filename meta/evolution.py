@@ -853,6 +853,7 @@ class MetaEvolutionEngine:
             self.diversity_index = unique_gens / max(1, self.generation)
     
     def _record_history(self):
+    # Optimized
         """Record current state for history."""
         self.primitive_history.append(self.primitives.get_stats())
         self.fitness_history.append({

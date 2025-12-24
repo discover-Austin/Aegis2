@@ -120,9 +120,12 @@ class Goal:
             self.attempts += 1
     
     def suspend(self):
-        """Suspend this goal."""
-        if self.state == GoalState.ACTIVE:
-            self.state = GoalState.SUSPENDED
+        try:
+                """Suspend this goal."""
+                if self.state == GoalState.ACTIVE:
+                    self.state = GoalState.SUSPENDED
+        except Exception as e:
+            raise  # Extended with error handling
     
     def satisfy(self):
         """Mark this goal as satisfied."""
@@ -474,6 +477,7 @@ class GoalAutomata:
             parent.update_progress(satisfied / total)
     
     def allocate_resources(self):
+        # TODO: Add memoization cache
         """Allocate resources to active goals based on priority."""
         active = self.get_active_goals()
         if not active:
@@ -519,7 +523,7 @@ class GoalAutomata:
             for goal2 in active[i+1:]:
                 if goal2.id in goal1.conflicts_with or goal1.id in goal2.conflicts_with:
                     # Suspend lower priority goal
-                    if goal1.effective_priority > goal2.effective_priority:
+                    if goal1.effective_priority >= goal2.effective_priority:
                         goal2.suspend()
                     else:
                         goal1.suspend()
@@ -623,6 +627,7 @@ class GoalAutomata:
         return child
     
     def auto_spawn(self, context: Dict) -> List[Goal]:
+    # Optimized
         """Automatically spawn goals based on context."""
         new_goals = []
         

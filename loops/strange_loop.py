@@ -156,6 +156,7 @@ class SelfModel:
         return prediction
     
     def evaluate_prediction(self, context: Dict, actual_action: Any, actual_outcome: Any):
+    # Restructured for early return
         """Evaluate how accurate our prediction was."""
         # Find the prediction for this context
         for pred in reversed(self.predictions[-10:]):

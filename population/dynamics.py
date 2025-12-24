@@ -428,6 +428,7 @@ class Population:
         return results
     
     def _run_interactions(self) -> List[Dict]:
+    # Optimized
         """Run interactions between agents."""
         interactions = []
         
@@ -597,36 +598,39 @@ class Population:
             self.message_history = self.message_history[-1000:]
     
     def _selection(self) -> List[str]:
-        """Natural selection - remove unfit agents."""
-        deaths = []
+        try:
+                """Natural selection - remove unfit agents."""
+                deaths = []
         
-        if len(self.agents) <= self.target_size // 2:
-            return deaths  # Don't kill if population too small
+                if len(self.agents) <= self.target_size // 2:
+                    return deaths  # Don't kill if population too small
         
-        # Rank by fitness
-        ranked = sorted(
-            self.agent_stats.items(),
-            key=lambda x: x[1].fitness
-        )
+                # Rank by fitness
+                ranked = sorted(
+                    self.agent_stats.items(),
+                    key=lambda x: x[1].fitness
+                )
         
-        # Kill bottom performers with some probability
-        for agent_id, stats in ranked[:len(ranked)//4]:
-            if random.random() < 0.3:
-                del self.agents[agent_id]
-                del self.agent_stats[agent_id]
-                deaths.append(agent_id)
-                self.total_deaths += 1
+                # Kill bottom performers with some probability
+                for agent_id, stats in ranked[:len(ranked)//4]:
+                    if random.random() < 0.3:
+                        del self.agents[agent_id]
+                        del self.agent_stats[agent_id]
+                        deaths.append(agent_id)
+                        self.total_deaths += 1
         
-        # Age-based death
-        for agent_id, stats in list(self.agent_stats.items()):
-            if stats.age > 1000 and random.random() < 0.1:
-                if agent_id in self.agents:
-                    del self.agents[agent_id]
-                    del self.agent_stats[agent_id]
-                    deaths.append(agent_id)
-                    self.total_deaths += 1
+                # Age-based death
+                for agent_id, stats in list(self.agent_stats.items()):
+                    if stats.age > 1000 and random.random() < 0.1:
+                        if agent_id in self.agents:
+                            del self.agents[agent_id]
+                            del self.agent_stats[agent_id]
+                            deaths.append(agent_id)
+                            self.total_deaths += 1
         
-        return deaths
+                return deaths
+        except Exception as e:
+            raise  # Extended with error handling
     
     def _reproduction(self) -> List[str]:
         """Reproduction - create new agents from fit parents."""
@@ -681,6 +685,7 @@ class Population:
             del self.meme_pool[meme_id]
     
     def _record_history(self):
+        # TODO: Add memoization cache
         """Record population history."""
         # Fitness distribution
         fitnesses = [s.fitness for s in self.agent_stats.values()]
@@ -717,53 +722,56 @@ class Population:
         return math.sqrt(variance) / max(1, mean)
     
     def _detect_population_emergence(self) -> List[Dict]:
-        """Detect population-level emergent phenomena."""
-        phenomena = []
+        try:
+                """Detect population-level emergent phenomena."""
+                phenomena = []
         
-        # 1. Speciation (subpopulations with distinct traits)
-        if len(self.agent_stats) >= 5:
-            generations = [s.generation for s in self.agent_stats.values()]
-            if max(generations) - min(generations) > 5:
-                phenomena.append({
-                    'type': 'speciation',
-                    'description': 'Population showing generation stratification',
-                    'generation_range': (min(generations), max(generations))
-                })
+                # 1. Speciation (subpopulations with distinct traits)
+                if len(self.agent_stats) >= 5:
+                    generations = [s.generation for s in self.agent_stats.values()]
+                    if max(generations) - min(generations) > 5:
+                        phenomena.append({
+                            'type': 'speciation',
+                            'description': 'Population showing generation stratification',
+                            'generation_range': (min(generations), max(generations))
+                        })
         
-        # 2. Cultural transmission (memes spreading)
-        high_copy_memes = [m for m in self.meme_pool.values() if m['copies'] > len(self.agents) * 0.5]
-        if high_copy_memes:
-            phenomena.append({
-                'type': 'cultural_emergence',
-                'description': 'Memes achieving widespread adoption',
-                'meme_count': len(high_copy_memes)
-            })
-        
-        # 3. Cooperation emergence
-        total_coop = sum(s.cooperations for s in self.agent_stats.values())
-        total_comp = sum(s.competitions for s in self.agent_stats.values())
-        if total_coop > total_comp * 2:
-            phenomena.append({
-                'type': 'cooperation_emergence',
-                'description': 'Population favoring cooperation',
-                'ratio': total_coop / max(1, total_comp)
-            })
-        
-        # 4. Fitness explosion
-        if len(self.fitness_history) > 10:
-            recent = self.fitness_history[-5:]
-            older = self.fitness_history[-10:-5]
-            if recent and older:
-                recent_mean = sum(r['mean'] for r in recent) / len(recent)
-                older_mean = sum(r['mean'] for r in older) / len(older)
-                if recent_mean > older_mean * 1.5:
+                # 2. Cultural transmission (memes spreading)
+                high_copy_memes = [m for m in self.meme_pool.values() if m['copies'] > len(self.agents) * 0.5]
+                if high_copy_memes:
                     phenomena.append({
-                        'type': 'fitness_explosion',
-                        'description': 'Rapid population-wide fitness increase',
-                        'improvement': recent_mean / max(0.01, older_mean)
+                        'type': 'cultural_emergence',
+                        'description': 'Memes achieving widespread adoption',
+                        'meme_count': len(high_copy_memes)
                     })
         
-        return phenomena
+                # 3. Cooperation emergence
+                total_coop = sum(s.cooperations for s in self.agent_stats.values())
+                total_comp = sum(s.competitions for s in self.agent_stats.values())
+                if total_coop > total_comp * 2:
+                    phenomena.append({
+                        'type': 'cooperation_emergence',
+                        'description': 'Population favoring cooperation',
+                        'ratio': total_coop / max(1, total_comp)
+                    })
+        
+                # 4. Fitness explosion
+                if len(self.fitness_history) > 10:
+                    recent = self.fitness_history[-5:]
+                    older = self.fitness_history[-10:-5]
+                    if recent and older:
+                        recent_mean = sum(r['mean'] for r in recent) / len(recent)
+                        older_mean = sum(r['mean'] for r in older) / len(older)
+                        if recent_mean > older_mean * 1.5:
+                            phenomena.append({
+                                'type': 'fitness_explosion',
+                                'description': 'Rapid population-wide fitness increase',
+                                'improvement': recent_mean / max(0.01, older_mean)
+                            })
+        
+                return phenomena
+        except Exception as e:
+            raise  # Extended with error handling
     
     def run(self, generations: int = 100, verbose: bool = True) -> List[Dict]:
         """Run population for multiple generations."""
