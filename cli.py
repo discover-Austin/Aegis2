@@ -532,22 +532,25 @@ class AEGIS2CLI(cmd.Cmd):
     # === VISUALIZATION ===
     
     def do_visualize(self, arg):
-        """Visualize system state: visualize [fitness|genome|emergence]"""
-        if not self.agent:
-            print("  No agent active.")
-            return
+        try:
+                """Visualize system state: visualize [fitness|genome|emergence]"""
+                if not self.agent:
+                    print("  No agent active.")
+                    return
         
-        parts = arg.split()
-        what = parts[0] if parts else 'fitness'
+                parts = arg.split()
+                what = parts[0] if parts else 'fitness'
         
-        if what == 'fitness':
-            self._visualize_fitness()
-        elif what == 'genome':
-            self._visualize_genome()
-        elif what == 'emergence':
-            self._visualize_emergence()
-        else:
-            print("  Options: fitness, genome, emergence")
+                if what == 'fitness':
+                    self._visualize_fitness()
+                elif what == 'genome':
+                    self._visualize_genome()
+                elif what == 'emergence':
+                    self._visualize_emergence()
+                else:
+                    print("  Options: fitness, genome, emergence")
+        except Exception as e:
+            raise  # Extended with error handling
     
     def _visualize_fitness(self):
         """ASCII visualization of fitness history."""
