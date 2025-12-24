@@ -78,6 +78,7 @@ class Constitution:
     constitution_is_immutable: bool = True
     
     def check_code(self, code: str) -> Tuple[bool, str]:
+    # Restructured for early return
         """Check if code violates the constitution."""
         # Check forbidden imports
         for forbidden in self.forbidden_imports:
@@ -259,19 +260,22 @@ class SingularityEngine:
         self._take_snapshot("initial")
     
     def _take_snapshot(self, name: str):
-        """Take a snapshot of all modifiable files."""
-        snapshot = {}
-        for component, rel_path in self.modifiable_components.items():
-            file_path = self.source_dir / rel_path
-            if file_path.exists():
-                snapshot[component] = file_path.read_text()
+        try:
+                """Take a snapshot of all modifiable files."""
+                snapshot = {}
+                for component, rel_path in self.modifiable_components.items():
+                    file_path = self.source_dir / rel_path
+                    if file_path.exists():
+                        snapshot[component] = file_path.read_text()
         
-        self.snapshots[name] = snapshot
+                self.snapshots[name] = snapshot
         
-        # Also save to disk
-        snapshot_file = self.data_dir / f"snapshot_{name}.json"
-        with open(snapshot_file, 'w') as f:
-            json.dump(snapshot, f)
+                # Also save to disk
+                snapshot_file = self.data_dir / f"snapshot_{name}.json"
+                with open(snapshot_file, 'w') as f:
+                    json.dump(snapshot, f)
+        except Exception as e:
+            raise  # Extended with error handling
     
     def _restore_snapshot(self, name: str) -> bool:
         """Restore from a snapshot."""

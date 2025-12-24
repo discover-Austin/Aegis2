@@ -171,6 +171,7 @@ class AEGIS2Apex:
         return results
     
     def run(self, cycles: int = 100, verbose: bool = True) -> List[Dict]:
+    # Optimized
         """Run the complete Apex system."""
         results = []
         

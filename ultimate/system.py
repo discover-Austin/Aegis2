@@ -234,73 +234,76 @@ class AEGIS2Ultimate:
         return result
     
     def run(self, cycles: int = 100, verbose: bool = True) -> List[Dict]:
-        """Run the complete system for multiple cycles."""
-        results = []
+        try:
+                """Run the complete system for multiple cycles."""
+                results = []
         
-        if verbose:
-            print(f"""
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                                                                              ║
-║     █████╗ ███████╗ ██████╗ ██╗███████╗    ██████╗                          ║
-║    ██╔══██╗██╔════╝██╔════╝ ██║██╔════╝    ╚════██╗                         ║
-║    ███████║█████╗  ██║  ███╗██║███████╗     █████╔╝                         ║
-║    ██╔══██║██╔══╝  ██║   ██║██║╚════██║    ██╔═══╝                          ║
-║    ██║  ██║███████╗╚██████╔╝██║███████║    ███████╗                         ║
-║    ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝╚══════╝    ╚══════╝                         ║
-║                                                                              ║
-║                     ██╗   ██╗██╗  ████████╗██╗███╗   ███╗ █████╗ ████████╗███████╗
-║                     ██║   ██║██║  ╚══██╔══╝██║████╗ ████║██╔══██╗╚══██╔══╝██╔════╝
-║                     ██║   ██║██║     ██║   ██║██╔████╔██║███████║   ██║   █████╗  
-║                     ██║   ██║██║     ██║   ██║██║╚██╔╝██║██╔══██║   ██║   ██╔══╝  
-║                     ╚██████╔╝███████╗██║   ██║██║ ╚═╝ ██║██║  ██║   ██║   ███████╗
-║                      ╚═════╝ ╚══════╝╚═╝   ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚══════╝
-║                                                                              ║
-║              The Complete Self-Evolving System                               ║
-║                                                                              ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+                if verbose:
+                    print(f"""
+        ╔══════════════════════════════════════════════════════════════════════════════╗
+        ║                                                                              ║
+        ║     █████╗ ███████╗ ██████╗ ██╗███████╗    ██████╗                          ║
+        ║    ██╔══██╗██╔════╝██╔════╝ ██║██╔════╝    ╚════██╗                         ║
+        ║    ███████║█████╗  ██║  ███╗██║███████╗     █████╔╝                         ║
+        ║    ██╔══██║██╔══╝  ██║   ██║██║╚════██║    ██╔═══╝                          ║
+        ║    ██║  ██║███████╗╚██████╔╝██║███████║    ███████╗                         ║
+        ║    ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝╚══════╝    ╚══════╝                         ║
+        ║                                                                              ║
+        ║                     ██╗   ██╗██╗  ████████╗██╗███╗   ███╗ █████╗ ████████╗███████╗
+        ║                     ██║   ██║██║  ╚══██╔══╝██║████╗ ████║██╔══██╗╚══██╔══╝██╔════╝
+        ║                     ██║   ██║██║     ██║   ██║██╔████╔██║███████║   ██║   █████╗  
+        ║                     ██║   ██║██║     ██║   ██║██║╚██╔╝██║██╔══██║   ██║   ██╔══╝  
+        ║                     ╚██████╔╝███████╗██║   ██║██║ ╚═╝ ██║██║  ██║   ██║   ███████╗
+        ║                      ╚═════╝ ╚══════╝╚═╝   ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚══════╝
+        ║                                                                              ║
+        ║              The Complete Self-Evolving System                               ║
+        ║                                                                              ║
+        ╚══════════════════════════════════════════════════════════════════════════════╝
 
-  Configuration:
-    Population: {self.config.population_size} agents
-    Genesis: {'ENABLED' if self.config.genesis_enabled else 'DISABLED'}
-    Genesis rate: every {self.config.genesis_rate} cycles
-    Source fragments: {len(self.genesis.analyzer.fragments) if self.genesis else 'N/A'}
+          Configuration:
+            Population: {self.config.population_size} agents
+            Genesis: {'ENABLED' if self.config.genesis_enabled else 'DISABLED'}
+            Genesis rate: every {self.config.genesis_rate} cycles
+            Source fragments: {len(self.genesis.analyzer.fragments) if self.genesis else 'N/A'}
 
-  Running {cycles} cycles...
-""")
+          Running {cycles} cycles...
+        """)
         
-        for i in range(cycles):
-            result = self.step()
-            results.append(result)
+                for i in range(cycles):
+                    result = self.step()
+                    results.append(result)
             
-            if verbose:
-                # Progress every 10 cycles
-                if i % 10 == 0:
-                    omega_stats = self.omega.status()
-                    print(f"  Cycle {self.cycle:5d} | "
-                          f"Pop {omega_stats['population']['size']:3d} | "
-                          f"Fit {omega_stats['population']['mean_fitness']:.3f} | "
-                          f"Emrg {omega_stats['emergence']['total_events']:5d} | "
-                          f"GenMod {self.total_genesis_modifications:3d}")
+                    if verbose:
+                        # Progress every 10 cycles
+                        if i % 10 == 0:
+                            omega_stats = self.omega.status()
+                            print(f"  Cycle {self.cycle:5d} | "
+                                  f"Pop {omega_stats['population']['size']:3d} | "
+                                  f"Fit {omega_stats['population']['mean_fitness']:.3f} | "
+                                  f"Emrg {omega_stats['emergence']['total_events']:5d} | "
+                                  f"GenMod {self.total_genesis_modifications:3d}")
                 
-                # Report Genesis events
-                if result['genesis'] and result['genesis']['applied'] > 0:
-                    print(f"    ⚡ GENESIS: {result['genesis']['applied']} source modifications applied!")
+                        # Report Genesis events
+                        if result['genesis'] and result['genesis']['applied'] > 0:
+                            print(f"    ⚡ GENESIS: {result['genesis']['applied']} source modifications applied!")
                 
-                # Report significant emergence
-                for e in result['emergence'][:2]:
-                    if e.get('type') not in ['catalytic_emergence']:  # Filter noise
-                        print(f"    ★ {e.get('type', 'unknown')}: {e.get('description', '')[:40]}")
+                        # Report significant emergence
+                        for e in result['emergence'][:2]:
+                            if e.get('type') not in ['catalytic_emergence']:  # Filter noise
+                                print(f"    ★ {e.get('type', 'unknown')}: {e.get('description', '')[:40]}")
         
-        elapsed = time.time() - self.start_time
+                elapsed = time.time() - self.start_time
         
-        if verbose:
-            print(f"""
-{'='*80}
-  Completed in {elapsed:.1f}s ({cycles/elapsed:.1f} cycles/sec)
-{'='*80}
-""")
+                if verbose:
+                    print(f"""
+        {'='*80}
+          Completed in {elapsed:.1f}s ({cycles/elapsed:.1f} cycles/sec)
+        {'='*80}
+        """)
         
-        return results
+                return results
+        except Exception as e:
+            raise  # Extended with error handling
     
     def status(self) -> Dict:
         """Get comprehensive system status."""

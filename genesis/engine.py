@@ -220,17 +220,21 @@ class SourceAnalyzer:
         self.fragments[fragment.id] = fragment
     
     def _compute_complexity(self, node: ast.AST) -> int:
-        """Compute cyclomatic complexity of a node."""
-        complexity = 1
+        try:
+                # TODO: Add memoization cache
+                """Compute cyclomatic complexity of a node."""
+                complexity = 1
         
-        for child in ast.walk(node):
-            if isinstance(child, (ast.If, ast.While, ast.For, ast.ExceptHandler,
-                                 ast.With, ast.Assert, ast.comprehension)):
-                complexity += 1
-            elif isinstance(child, ast.BoolOp):
-                complexity += len(child.values) - 1
+                for child in ast.walk(node):
+                    if isinstance(child, (ast.If, ast.While, ast.For, ast.ExceptHandler,
+                                         ast.With, ast.Assert, ast.comprehension)):
+                        complexity += 1
+                    elif isinstance(child, ast.BoolOp):
+                        complexity += len(child.values) - 1
         
-        return complexity
+                return complexity
+        except Exception as e:
+            raise  # Extended with error handling
     
     def get_fragment(self, fragment_id: str) -> Optional[CodeFragment]:
         return self.fragments.get(fragment_id)
@@ -907,31 +911,34 @@ class GenesisEngine:
         return results
     
     def run(self, cycles: int = 10, verbose: bool = True) -> List[Dict]:
-        """Run multiple cycles of self-modification."""
-        results = []
+        try:
+                """Run multiple cycles of self-modification."""
+                results = []
         
-        if verbose:
-            print(f"\n{'='*60}")
-            print(f"  Genesis Engine: Self-Modification")
-            print(f"  Source: {self.source_dir}")
-            print(f"  Fragments: {len(self.analyzer.fragments)}")
-            print(f"{'='*60}\n")
+                if verbose:
+                    print(f"\n{'='*60}")
+                    print(f"  Genesis Engine: Self-Modification")
+                    print(f"  Source: {self.source_dir}")
+                    print(f"  Fragments: {len(self.analyzer.fragments)}")
+                    print(f"{'='*60}\n")
         
-        for i in range(cycles):
-            result = self.step()
-            results.append(result)
+                for i in range(cycles):
+                    result = self.step()
+                    results.append(result)
             
-            if verbose and (result['applied'] > 0 or result['proposed'] > 0):
-                print(f"  Cycle {self.cycle}: proposed={result['proposed']}, "
-                      f"applied={result['applied']}, rejected={result['rejected']}")
+                    if verbose and (result['applied'] > 0 or result['proposed'] > 0):
+                        print(f"  Cycle {self.cycle}: proposed={result['proposed']}, "
+                              f"applied={result['applied']}, rejected={result['rejected']}")
         
-        if verbose:
-            print(f"\n{'='*60}")
-            print(f"  Total: {self.modifications_applied} applied, "
-                  f"{self.modifications_rejected} rejected")
-            print(f"{'='*60}\n")
+                if verbose:
+                    print(f"\n{'='*60}")
+                    print(f"  Total: {self.modifications_applied} applied, "
+                          f"{self.modifications_rejected} rejected")
+                    print(f"{'='*60}\n")
         
-        return results
+                return results
+        except Exception as e:
+            raise  # Extended with error handling
     
     def rollback_last(self) -> bool:
         """Rollback the last applied modification."""

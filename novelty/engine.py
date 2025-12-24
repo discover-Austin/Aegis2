@@ -473,6 +473,7 @@ class NoveltyEngine:
         return curiosity
     
     def _estimate_learning_potential(self, behavior: BehaviorCharacterization) -> float:
+        # TODO: Add memoization cache
         """Estimate how much we could learn from exploring this behavior."""
         # Look at similar behaviors in archive
         similar = self.archive.get_nearest(behavior, k=5)

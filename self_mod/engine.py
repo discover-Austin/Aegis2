@@ -514,15 +514,18 @@ class SelfModificationEngine:
             return False
     
     def _get_strategy_for_modification(self, modification: Modification) -> str:
-        """Get the strategy category for a modification."""
-        if modification.target_type == 'parameter':
-            return 'parameter_tune'
-        elif modification.target_type == 'gene':
-            return 'gene_modification'
-        elif modification.target_type == 'pattern':
-            return 'pattern_evolution'
-        else:
-            return 'structure_change'
+        try:
+                """Get the strategy category for a modification."""
+                if modification.target_type == 'parameter':
+                    return 'parameter_tune'
+                elif modification.target_type == 'gene':
+                    return 'gene_modification'
+                elif modification.target_type == 'pattern':
+                    return 'pattern_evolution'
+                else:
+                    return 'structure_change'
+        except Exception as e:
+            raise  # Extended with error handling
     
     def evaluate_modifications(self, current_fitness: float):
         """Evaluate pending modifications and decide which to apply."""

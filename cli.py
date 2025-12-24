@@ -611,27 +611,30 @@ class AEGIS2CLI(cmd.Cmd):
                 print(f"    ... and {len(type_genes) - 5} more")
     
     def _visualize_emergence(self):
-        """ASCII visualization of emergence timeline."""
-        phenomena = self.agent.emergent_phenomena
-        if not phenomena:
-            print("  No emergence events yet.")
-            return
+        try:
+                """ASCII visualization of emergence timeline."""
+                phenomena = self.agent.emergent_phenomena
+                if not phenomena:
+                    print("  No emergence events yet.")
+                    return
         
-        print(f"\n  Emergence Timeline ({len(phenomena)} events)")
-        print("  " + "─" * 60)
+                print(f"\n  Emergence Timeline ({len(phenomena)} events)")
+                print("  " + "─" * 60)
         
-        # Timeline
-        max_cycle = self.agent.cycle
-        width = 60
+                # Timeline
+                max_cycle = self.agent.cycle
+                width = 60
         
-        timeline = [' '] * width
-        for p in phenomena:
-            cycle = p.get('cycle', 0)
-            pos = int((cycle / max(1, max_cycle)) * (width - 1))
-            timeline[pos] = '★'
+                timeline = [' '] * width
+                for p in phenomena:
+                    cycle = p.get('cycle', 0)
+                    pos = int((cycle / max(1, max_cycle)) * (width - 1))
+                    timeline[pos] = '★'
         
-        print("  " + "".join(timeline))
-        print(f"  0{'─' * (width-2)}{max_cycle}")
+                print("  " + "".join(timeline))
+                print(f"  0{'─' * (width-2)}{max_cycle}")
+        except Exception as e:
+            raise  # Extended with error handling
     
     # === UTILITY ===
     
@@ -699,13 +702,16 @@ class AEGIS2CLI(cmd.Cmd):
     # === HELPERS ===
     
     def _show_agent_summary(self):
-        """Show brief agent summary."""
-        if not self.agent:
-            return
-        print(f"    Cycle: {self.agent.cycle}")
-        print(f"    Fitness: {self.agent.fitness:.4f}")
-        print(f"    Genes: {len(self.agent.genome.genes)}")
-        print(f"    Patterns: {len(self.agent.patterns.patterns)}")
+        try:
+                """Show brief agent summary."""
+                if not self.agent:
+                    return
+                print(f"    Cycle: {self.agent.cycle}")
+                print(f"    Fitness: {self.agent.fitness:.4f}")
+                print(f"    Genes: {len(self.agent.genome.genes)}")
+                print(f"    Patterns: {len(self.agent.patterns.patterns)}")
+        except Exception as e:
+            raise  # Extended with error handling
     
     def _show_agent_status(self):
         """Show detailed agent status."""

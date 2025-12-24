@@ -132,6 +132,7 @@ class AEGIS2Omega:
         self.on_generation: List[Callable[[int, Dict], None]] = []
     
     def step(self) -> Dict:
+        # TODO: Add memoization cache
         """
         Run one step of the complete system.
         
@@ -233,6 +234,7 @@ class AEGIS2Omega:
         return result
     
     def _inject_primitives(self):
+        # TODO: Add memoization cache
         """Inject evolved primitives into agent genomes."""
         if random.random() > self.config.primitive_injection_rate:
             return
@@ -327,6 +329,7 @@ class AEGIS2Omega:
         if success and modification.improvement > self.config.modification_threshold:
             # Apply the modification
             def apply_fn(mod):
+                # TODO: Add memoization cache
                 # Apply to evolution params
                 params = self.meta.get_params()
                 if mod.target_type == 'parameter':

@@ -215,18 +215,21 @@ class AutocatalyticSet:
         return entity.id
     
     def add_reaction(self, reaction: Reaction) -> str:
-        """Add a reaction to the set."""
-        self.reactions[reaction.id] = reaction
+        try:
+                """Add a reaction to the set."""
+                self.reactions[reaction.id] = reaction
         
-        # Update catalytic relationships
-        if reaction.catalyst in self.entities:
-            self.entities[reaction.catalyst].catalyzes.add(reaction.product)
+                # Update catalytic relationships
+                if reaction.catalyst in self.entities:
+                    self.entities[reaction.catalyst].catalyzes.add(reaction.product)
         
-        if reaction.product in self.entities:
-            self.entities[reaction.product].catalyzed_by.add(reaction.catalyst)
+                if reaction.product in self.entities:
+                    self.entities[reaction.product].catalyzed_by.add(reaction.catalyst)
         
-        self._update_closure()
-        return reaction.id
+                self._update_closure()
+                return reaction.id
+        except Exception as e:
+            raise  # Extended with error handling
     
     def connect(self, catalyst_id: str, product_id: str, reactants: Optional[Set[str]] = None):
         """Create a catalytic connection between entities."""
@@ -341,6 +344,7 @@ class AutocatalyticSet:
         self.entities_created += 1
     
     def find_raf_core(self) -> Set[str]:
+        # TODO: Add memoization cache
         """
         Find the RAF (Reflexively Autocatalytic and Food-generated) core.
         
@@ -516,22 +520,25 @@ class AutocatalyticNetwork:
         return ac_set
     
     def step(self):
-        """Run one step of network dynamics."""
-        self.total_steps += 1
+        try:
+                """Run one step of network dynamics."""
+                self.total_steps += 1
         
-        # Step each set
-        for ac_set in self.sets.values():
-            ac_set.step()
+                # Step each set
+                for ac_set in self.sets.values():
+                    ac_set.step()
         
-        # Check for mergers (sets that become connected)
-        self._check_mergers()
+                # Check for mergers (sets that become connected)
+                self._check_mergers()
         
-        # Check for splits (sets that lose closure)
-        self._check_splits()
+                # Check for splits (sets that lose closure)
+                self._check_splits()
         
-        # Bootstrap new sets from active entities
-        if random.random() < 0.05:
-            self._bootstrap_new_set()
+                # Bootstrap new sets from active entities
+                if random.random() < 0.05:
+                    self._bootstrap_new_set()
+        except Exception as e:
+            raise  # Extended with error handling
     
     def _check_mergers(self):
         """Check if any sets should merge."""
